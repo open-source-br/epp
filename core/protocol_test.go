@@ -52,6 +52,7 @@ func (stream *StreamConn) Read(b []byte) (n int, err error) {
 	var buffer []byte
 	currentBufferSize := len(b)
 
+	// Will simulate limit size to read buffer. For test purpose only
 	if currentBufferSize > 20 {
 		buffer = make([]byte, 20)
 
@@ -71,7 +72,7 @@ func (stream *StreamConn) Write(b []byte) (n int, err error) {
 	var buffer []byte
 	currentMessageSize := len(b)
 
-	// Will simulate limit size to write buffer
+	// Will simulate limit size to write buffer. For test purpose only
 	if currentMessageSize > 20 {
 		buffer = make([]byte, 20)
 

@@ -8,7 +8,8 @@ import (
 )
 
 /*
-	Data Unit Format - https://datatracker.ietf.org/doc/html/rfc5734#section-4
+
+   Data Unit Format - https://datatracker.ietf.org/doc/html/rfc5734#section-4
 
    The EPP data unit contains two fields: a 32-bit header that describes
    the total length of the data unit, and the EPP XML instance.  The
