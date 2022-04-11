@@ -26,3 +26,9 @@ jobs:
 
       - name: Running Test
         run: go test ./core -coverprofile=coverage.out
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
