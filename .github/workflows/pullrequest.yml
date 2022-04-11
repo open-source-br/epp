@@ -1,15 +1,17 @@
-name: CI
+name: Pull Request
 
 permissions:
   contents: read
 
 on:
-  pull_request:
+  push:
     branches: [main]
+  pull_request:
+    branches: [main, dev]
 
 jobs:
   build:
-    name: Build
+    name: CI
     runs-on: ubuntu-latest
 
     steps:
