@@ -2,6 +2,27 @@
 
 The Extensible Provisioning Protocol [(EPP)](https://en.wikipedia.org/wiki/Extensible_Provisioning_Protocol) is a flexible protocol designed for register domain name over internet.
 
+<div align="center">
+  
+ 
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=open-source-br_epp&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=open-source-br_epp)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=open-source-br_epp&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=open-source-br_epp)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=open-source-br_epp&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=open-source-br_epp)
+
+</div>
+
+<div align="center">
+
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=open-source-br_epp&metric=bugs)](https://sonarcloud.io/summary/new_code?id=open-source-br_epp)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=open-source-br_epp&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=open-source-br_epp)
+[![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=open-source-br_epp&metric=sqale_index)](https://sonarcloud.io/summary/new_code?id=open-source-br_epp)
+ [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=open-source-br_epp&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=open-source-br_epp)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=open-source-br_epp&metric=coverage)](https://sonarcloud.io/summary/new_code?id=open-source-br_epp)
+
+</div>
+
+
+
 ## References
 
 ### General
