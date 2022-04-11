@@ -1,0 +1,36 @@
+name: Pull Request
+
+permissions:
+  contents: read
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main, dev]
+
+jobs:
+  build:
+    name: CI
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clone Repository
+        uses: actions/checkout@v3
+
+      - name: Setup GO
+        uses: actions/setup-go@v3
+        with:
+          go-version: "1.18.x"
+
+      - name: Running Lint (go vet)
+        run: go vet -json ./core > govetoutput.json
+
+      - name: Running Test
+        run: go test  ./core -coverprofile=coverage.out
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
