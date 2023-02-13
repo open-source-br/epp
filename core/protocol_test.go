@@ -2,59 +2,27 @@ package core
 
 import (
 	"bytes"
-	"fmt"
-	"net"
 	"testing"
-	"time"
 )
 
-// StreamConn is a fake to net.Conn for test purpose only
-type StreamConn struct {
-	buffer bytes.Buffer
+// Stream is a fake for test purpose only
+type Stream struct {
+	buffer      bytes.Buffer
+	limitReader int
+	limitWriter int
 }
 
-func (stream *StreamConn) LocalAddr() net.Addr {
-	return nil
+func NewStream() *Stream {
+	return &Stream{buffer: bytes.Buffer{}, limitReader: 20, limitWriter: 20}
 }
 
-func (stream *StreamConn) RemoteAddr() net.Addr {
-	return nil
-}
-
-func (stream *StreamConn) Close() error {
-	return fmt.Errorf("stream conn fake: not implemented, for test purpose only)")
-}
-
-func (stream *StreamConn) SetDeadline(t time.Time) error {
-	return fmt.Errorf("stream conn fake: not implemented, for test purpose only)")
-}
-
-func (stream *StreamConn) SetReadDeadline(t time.Time) error {
-	return fmt.Errorf("stream conn fake: not implemented, for test purpose only)")
-}
-
-func (stream *StreamConn) SetWriteDeadline(t time.Time) error {
-	return fmt.Errorf("stream conn fake: not implemented, for test purpose only)")
-}
-
-func NewStreamConn() *StreamConn {
-	return &StreamConn{buffer: bytes.Buffer{}}
-}
-
-func NewStreamConnWithData(defaultMessage string) *StreamConn {
-	conn := &StreamConn{buffer: bytes.Buffer{}}
-	WriteMessage(defaultMessage, conn)
-
-	return conn
-}
-
-func (stream *StreamConn) Read(b []byte) (n int, err error) {
+func (stream *Stream) Read(b []byte) (n int, err error) {
 	var buffer []byte
 	currentBufferSize := len(b)
 
 	// Will simulate limit size to read buffer. For test purpose only
-	if currentBufferSize > 20 {
-		buffer = make([]byte, 20)
+	if currentBufferSize > stream.limitReader {
+		buffer = make([]byte, stream.limitReader)
 
 	} else {
 		buffer = make([]byte, currentBufferSize)
@@ -68,13 +36,13 @@ func (stream *StreamConn) Read(b []byte) (n int, err error) {
 
 }
 
-func (stream *StreamConn) Write(b []byte) (n int, err error) {
+func (stream *Stream) Write(b []byte) (n int, err error) {
 	var buffer []byte
 	currentMessageSize := len(b)
 
 	// Will simulate limit size to write buffer. For test purpose only
-	if currentMessageSize > 20 {
-		buffer = make([]byte, 20)
+	if currentMessageSize > stream.limitWriter {
+		buffer = make([]byte, stream.limitWriter)
 
 	} else {
 		buffer = make([]byte, currentMessageSize)
@@ -86,27 +54,28 @@ func (stream *StreamConn) Write(b []byte) (n int, err error) {
 }
 
 func TestWriteShortMessage(t *testing.T) {
-	stream := NewStreamConn()
+	stream := NewStream()
 
-	bytesWritter, _ := WriteMessage("hellou!", stream)
+	bytesWriter, _ := WriteMessage("Hello!", stream)
 
-	if bytesWritter != 7 {
+	if bytesWriter != 6 {
+		t.Log("Expected 6 bytes written, got ', bytesWriter")
 		t.FailNow()
 	}
 }
 
 func TestWriteLargeMessage(t *testing.T) {
-	stream := NewStreamConn()
+	stream := NewStream()
 
-	bytesWritter, _ := WriteMessage("message to write buffer", stream)
+	bytesWriter, _ := WriteMessage("message to write buffer", stream)
 
-	if bytesWritter != 23 {
+	if bytesWriter != 23 {
 		t.FailNow()
 	}
 }
-
 func TestReadShortMessage(t *testing.T) {
-	stream := NewStreamConnWithData("Hello!")
+	stream := NewStream()
+	WriteMessage("Hello!", stream) // Write message to read
 
 	message, _ := ReadMessage(stream)
 
@@ -116,7 +85,8 @@ func TestReadShortMessage(t *testing.T) {
 }
 
 func TestReadLargeMessage(t *testing.T) {
-	stream := NewStreamConnWithData("message to read buffer")
+	stream := NewStream()
+	WriteMessage("message to read buffer", stream) // Write message to read
 
 	message, _ := ReadMessage(stream)
 

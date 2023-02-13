@@ -3,8 +3,8 @@ package core
 import (
 	"encoding/binary"
 	"fmt"
+	"io"
 	"log"
-	"net"
 )
 
 /*
@@ -39,10 +39,10 @@ import (
 
 const TotalLength int32 = 4
 
-func writeBufferSize(size int, conn net.Conn) (n int, err error) {
+func writeBufferSize(size int, stream io.Writer) (n int, err error) {
 	buffer := make([]byte, TotalLength)
 	binary.BigEndian.PutUint32(buffer, uint32(size))
-	sizeWritten, err := conn.Write(buffer)
+	sizeWritten, err := stream.Write(buffer)
 
 	if err != nil {
 		err := fmt.Errorf("error on write size buffer:  %s", err)
@@ -52,10 +52,10 @@ func writeBufferSize(size int, conn net.Conn) (n int, err error) {
 	return sizeWritten, nil
 }
 
-func readBufferSize(conn net.Conn) (size int, err error) {
+func readBufferSize(stream io.Reader) (size int, err error) {
 	bufferSize := make([]byte, TotalLength)
 
-	if _, err := conn.Read(bufferSize); err != nil {
+	if _, err := stream.Read(bufferSize); err != nil {
 		err := fmt.Errorf("error on read size buffer:  %s", err)
 		return -1, err
 	}
@@ -63,14 +63,14 @@ func readBufferSize(conn net.Conn) (size int, err error) {
 	return int(binary.BigEndian.Uint32(bufferSize)), nil
 }
 
-func writePendingBytes(messageSize int, messageSizeWritten int, messageBuffer []byte, conn net.Conn) (n int, err error) {
+func writePendingBytes(messageSize int, messageSizeWritten int, messageBuffer []byte, stream io.Writer) (n int, err error) {
 	var messageSizeCurrent = messageSizeWritten
 
 	for {
 		if messageSize != messageSizeCurrent {
 			buffer := messageBuffer[messageSizeWritten:messageSize]
 
-			currentWriteBytesSize, err := conn.Write(buffer)
+			currentWriteBytesSize, err := stream.Write(buffer)
 
 			if err != nil {
 				err := fmt.Errorf("error on write message buffer:  %s", err)
@@ -86,14 +86,14 @@ func writePendingBytes(messageSize int, messageSizeWritten int, messageBuffer []
 
 }
 
-func readPendingBytes(messageSize int, messageSizeRead int, messageBuffer []byte, conn net.Conn) (buffer []byte, err error) {
+func readPendingBytes(messageSize int, messageSizeRead int, messageBuffer []byte, stream io.Reader) (buffer []byte, err error) {
 	var messageSizeCurrent = messageSizeRead
 
 	for {
 		if messageSize != messageSizeCurrent {
 			buffer := make([]byte, messageSize-messageSizeCurrent)
 
-			currentReadBytesSize, err := conn.Read(buffer)
+			currentReadBytesSize, err := stream.Read(buffer)
 
 			messageSizeCurrent += currentReadBytesSize
 
@@ -112,11 +112,11 @@ func readPendingBytes(messageSize int, messageSizeRead int, messageBuffer []byte
 	}
 }
 
-func WriteMessage(message string, conn net.Conn) (n int, err error) {
+func WriteMessage(message string, stream io.Writer) (n int, err error) {
 	messageBuffer := []byte(message)
 	messageSize := len(messageBuffer)
-	writeBufferSize(messageSize, conn)
-	messageSizeWritten, err := conn.Write(messageBuffer)
+	writeBufferSize(messageSize, stream)
+	messageSizeWritten, err := stream.Write(messageBuffer)
 
 	if err != nil {
 		err := fmt.Errorf("error on write message buffer:  %s", err)
@@ -126,7 +126,7 @@ func WriteMessage(message string, conn net.Conn) (n int, err error) {
 	if messageSize != messageSizeWritten {
 		log.Println("not all bytes were written in first tentative, trying to write pending ")
 
-		byteWritten, err := writePendingBytes(messageSize, messageSizeWritten, messageBuffer, conn)
+		byteWritten, err := writePendingBytes(messageSize, messageSizeWritten, messageBuffer, stream)
 
 		if err != nil {
 			err := fmt.Errorf("error on write pending bytes to server:  %s", err)
@@ -139,10 +139,10 @@ func WriteMessage(message string, conn net.Conn) (n int, err error) {
 	return messageSizeWritten, nil
 }
 
-func ReadMessage(conn net.Conn) (message string, err error) {
-	messageSize, _ := readBufferSize(conn)
+func ReadMessage(stream io.Reader) (message string, err error) {
+	messageSize, _ := readBufferSize(stream)
 	messageBuffer := make([]byte, messageSize)
-	messageSizeRead, err := conn.Read(messageBuffer)
+	messageSizeRead, err := stream.Read(messageBuffer)
 
 	if err != nil {
 		err := fmt.Errorf("error on read message buffer:  %s", err)
@@ -152,7 +152,7 @@ func ReadMessage(conn net.Conn) (message string, err error) {
 	if messageSize != messageSizeRead {
 		log.Println("not all bytes were read in first tentative, trying to read pending")
 
-		buffer, err := readPendingBytes(messageSize, messageSizeRead, messageBuffer, conn)
+		buffer, err := readPendingBytes(messageSize, messageSizeRead, messageBuffer, stream)
 
 		if err != nil {
 			err := fmt.Errorf("error on read pending bytes from server:  %s", err)
