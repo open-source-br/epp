@@ -27,7 +27,7 @@ jobs:
       
 
       - name: Running Lint (go vet)
-        run: go vet -json ./core > govetoutput.json
+        run: go vet -json ./src/core > govetoutput.json
 
       - name: Running Test
         run: go test  ./core -coverprofile=coverage.out
