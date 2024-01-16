@@ -1,0 +1,16 @@
+{
+  "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json",
+  "useGitignore": true,
+  "ignorePaths": [".vscode", ".gitignore"],
+  "dictionaries": [
+    "en_US",
+    "companies",
+    "misc",
+    "softwareTerms",
+    "bash",
+    "filetypes",
+    "powershell",
+    "lorem-ipsum"
+  ],
+  "words": []
+}
