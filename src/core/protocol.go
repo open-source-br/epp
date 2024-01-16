@@ -135,7 +135,6 @@ func WriteMessage(message string, stream io.Writer) (n int, err error) {
 
 		return byteWritten, nil
 	}
-
 	return messageSizeWritten, nil
 }
 
