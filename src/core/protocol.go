@@ -141,6 +141,12 @@ func WriteMessage(message string, stream io.Writer) (n int, err error) {
 
 func ReadMessage(stream io.Reader) (message string, err error) {
 	messageSize, _ := readBufferSize(stream)
+
+	if messageSize <= 0 {
+		err := fmt.Errorf("error on read empty buffer:  %s", err)
+		return "", err
+	}
+
 	messageBuffer := make([]byte, messageSize)
 	messageSizeRead, err := stream.Read(messageBuffer)
 
