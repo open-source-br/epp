@@ -30,7 +30,7 @@ jobs:
         run: go vet -json ./src/core > govetoutput.json
 
       - name: Running Test
-        run: go test  ./core -coverprofile=coverage.out
+        run: go test  ./src/core -coverprofile=coverage.out
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
