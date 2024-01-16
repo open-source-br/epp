@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-// Stream is a fake for test purpose only
+// Stream is a mock for test purpose only
 type Stream struct {
 	buffer      bytes.Buffer
 	limitReader int
