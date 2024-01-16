@@ -57,7 +57,7 @@ func TestReadFromEmptyStream(t *testing.T) {
 	}
 }
 
-func TestReadShortMessageWithShortLimitReaderAndWritter(t *testing.T) {
+func TestReadShortMessageWithShortLimitReaderAndWriter(t *testing.T) {
 	stream := &MockStream{buffer: bytes.Buffer{}, limitReader: 4, limitWriter: 4}
 	WriteMessage("Hello!", stream) // echo
 
