@@ -16,20 +16,21 @@ jobs:
 
     steps:
       - name: Clone Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Setup GO
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v5
         with:
-          go-version: "1.18.x"
+          go-version-file: './go.work'
+      
 
       - name: Running Lint (go vet)
-        run: go vet -json ./core > govetoutput.json
+        run: go vet -json ./src/core > govetoutput.json
 
       - name: Running Test
-        run: go test  ./core -coverprofile=coverage.out
+        run: go test  ./src/core -coverprofile=coverage.out
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master

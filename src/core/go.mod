@@ -1,3 +1,3 @@
 module github.com/open-source-br/epp/core
 
-go 1.18
+go 1.21.6
